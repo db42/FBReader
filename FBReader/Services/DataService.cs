@@ -15,18 +15,24 @@ namespace FBReader.Services
 {
     public class FBMiniProfile
     {
+        public string id;
+        public string name;
     }
 
     public class FBProfile : FBMiniProfile
     {
-        public string id;
-        public string name;
         public string first_name;
         public string last_name;
         public string link;
         public string username;
         public string gender;
         public string locale;
+        public string relationship_status;
+    }
+
+    public class FriendsListContainer
+    {
+        public List<FBMiniProfile> data;
     }
 
     public class FBData
@@ -35,14 +41,19 @@ namespace FBReader.Services
         private HttpClient httpClient;
 
         private ObservableCollection<FBMiniProfile> _FBItems = new ObservableCollection<FBMiniProfile>();
-        public ObservableCollection<FBMiniProfile> FBItems{
+        public ObservableCollection<FBMiniProfile> FBItems
+        {
             get { return _FBItems; }
         }
+
 
         public FBData()
         {
             this.httpClient = getHttpClient();
-            this.FetchUserProfile("btaylor");    
+            //this.FetchUserProfile("btaylor");
+            string access_token = "AAAAAAITEghMBANKaSgSRJ6d0VP6LWBx8Ddbc2lPJlyewCmx4F1TZAG4ZB3xfZA8iZCLvwt6dB2d8TI3EiNP7POhD6SZCZAwABXT844til7UwZDZD";
+            //this.FetchUserFriends("me", access_token);
+            this.GetRStatusSingleFriends("me", access_token);
         }
 
         private static HttpClient getHttpClient()
@@ -52,26 +63,26 @@ namespace FBReader.Services
             return httpClient;
         }
 
-        private static FBProfile parseJson(byte[] jsonResponse)
+        private static object parseJson(byte[] jsonResponse, Type returnObjectType)
         {
 
             MemoryStream stream = new MemoryStream(jsonResponse);
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(FBProfile));
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(returnObjectType);
 
-            FBProfile profile;
-            profile = (FBProfile)ser.ReadObject(stream);
+            Object returnObject;
+            returnObject = ser.ReadObject(stream);
 
-            return profile;
+            return returnObject;
         }
 
-        public async void FetchUserProfile(string username) 
+        public async Task<FBProfile> FetchUserProfile(string username, string auth_token)
         {
             try
             {
-                
-                string url = _baseurl + username;
+
+                string url = _baseurl + username + "?access_token=" + auth_token;
                 var jsonResponse = await httpClient.GetByteArrayAsync(url);
-                FBProfile profile = parseJson(jsonResponse);
+                FBProfile profile = (FBProfile)parseJson(jsonResponse, typeof(FBProfile));
 
                 //HttpResponseMessage response = await httpClient.GetAsync(_url);
                 //response.EnsureSuccessStatusCode();
@@ -81,13 +92,70 @@ namespace FBReader.Services
                 //responseBodyAsText = responseBodyAsText.Replace("<br>", Environment.NewLine); // Insert new lines
                 //string outputView = responseBodyAsText;
                 Debug.WriteLine("response {0}", profile.name);
-                
+                return profile;
+
             }
             catch (HttpRequestException hre)
             {
                 Debug.WriteLine("http exception {0}", hre.ToString());
+                return null;
             }
-        }   
+        }
+
+        private bool IsGirlWithRStatusSingle(FBProfile profile)
+        {
+            if (profile.gender.Equals("male") || profile.relationship_status == null)
+                return false;
+
+            if (profile.relationship_status.Equals("Single"))
+                return true;
+
+            return false;
+           
+        }
+
+
+
+        private async Task<List<FBMiniProfile>> FetchUserFriends(string username, string auth_token)
+        {
+            try
+            {
+                string url = _baseurl+ username + "/friends?access_token=" + auth_token;
+
+                var jsonResponse = await httpClient.GetByteArrayAsync(url);
+                FriendsListContainer friendListContainer = (FriendsListContainer)parseJson(jsonResponse, typeof(FriendsListContainer));
+
+                //MemoryStream stream = new MemoryStream(jsonResponse);
+                //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(FriendsListContainer));
+
+                //friends = (List<FBMiniProfile>)ser.ReadObject(stream);
+                //FriendsListContainer test = (FriendsListContainer)ser.ReadObject(stream);
+
+                Debug.WriteLine("friends {0}", friendListContainer.data);
+                return friendListContainer.data;
+            }
+            catch (HttpRequestException hre)
+            {
+                Debug.WriteLine("http exception {0}", hre.ToString());
+                return null;
+            }
+
+        }
+
+        public async Task<List<FBProfile>> GetRStatusSingleFriends(string username, string auth_token)
+        {
+            List<FBProfile> singleProfiles = new List<FBProfile>();
+            List<FBMiniProfile> friendsList = await FetchUserFriends(username, auth_token);
+
+            foreach (var friend in friendsList)
+            {
+                FBProfile profile = await FetchUserProfile(friend.id, auth_token);
+                if (IsGirlWithRStatusSingle(profile))
+                    singleProfiles.Add(profile);
+            }
+
+            return singleProfiles;
+        }
 
 
 
