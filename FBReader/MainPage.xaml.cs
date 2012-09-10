@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FBReader.Services;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -24,6 +25,8 @@ namespace FBReader
         public MainPage()
         {
             this.InitializeComponent();
+            FBData fbData = (FBData)App.Current.Resources["fbData"];
+            fbData.FetchRStatusSingleFriendsAsync();
         }
 
         /// <summary>
@@ -33,6 +36,12 @@ namespace FBReader
         /// property is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            FBData fbData = (FBData)App.Current.Resources["fbData"];
+
+            if (fbData != null)
+            {                
+                this.DataContext = fbData.FBItems;
+            }
         }
     }
 }
