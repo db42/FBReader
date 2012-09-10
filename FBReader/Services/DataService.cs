@@ -56,15 +56,15 @@ namespace FBReader.Services
         {
             this.authService = new AuthService();
             this.httpClient = getHttpClient();
-            //this.FetchUserProfile("btaylor");
-            //string access_token = "AAAAAAITEghMBANKaSgSRJ6d0VP6LWBx8Ddbc2lPJlyewCmx4F1TZAG4ZB3xfZA8iZCLvwt6dB2d8TI3EiNP7POhD6SZCZAwABXT844til7UwZDZD";
-            //this.FetchUserFriends("me", access_token);
             this.test();
         }
 
         private async void test()
         {
-            List<FBMiniProfile> friends = await this.GetRStatusSingleFriends("me", authService.access_token);
+            Task<string> getAccessTokenTask = this.authService.FetchAuthToken();
+            string access_token = await getAccessTokenTask;
+
+            List<FBMiniProfile> friends = await this.GetRStatusSingleFriends("me", access_token);
         }
 
 
@@ -89,7 +89,7 @@ namespace FBReader.Services
 
         private string constructProfileUrl(string username, string access_token)
         {
-            return _baseurl + username + "?access_token=" + access_token + "&expires_in=5184000&fields=id,name,relationship_status,friends.fields(relationship_status,gender,name)";
+            return _baseurl + username + "?" + access_token + "&fields=id,name,relationship_status,friends.fields(relationship_status,gender,name)";
         }
 
         public async Task<FBProfile> FetchUserProfile(string username, string access_token)
