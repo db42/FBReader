@@ -11,12 +11,10 @@ namespace FBReader.Services
     {
         private String FacebookClientID = "328608250568415";
         private String FacebookCallbackUrl = "https://www.facebook.com/connect/login_success.html";
-        private String access_token;
+        public String access_token;
         public AuthService()
         {
             FetchAuthToken();
-
-
         }
 
 
