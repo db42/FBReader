@@ -15,10 +15,10 @@ namespace FBReader.Services
 {
     public class FBMiniProfile
     {
-        public string id;
-        public string name;
-        public string gender;
-        public string relationship_status;
+        public string id {get; set;}
+        public string name { get; set; }
+        public string gender { get; set; }
+        public string relationship_status { get; set; }
 
     }
 
@@ -49,6 +49,7 @@ namespace FBReader.Services
         public ObservableCollection<FBMiniProfile> FBItems
         {
             get { return _FBItems; }
+            set { _FBItems = value; }
         }
 
 
@@ -56,15 +57,16 @@ namespace FBReader.Services
         {
             this.authService = new AuthService();
             this.httpClient = getHttpClient();
-            this.test();
         }
 
-        private async void test()
+        public async void FetchRStatusSingleFriendsAsync()
         {
-            Task<string> getAccessTokenTask = this.authService.FetchAuthToken();
-            string access_token = await getAccessTokenTask;
-
-            List<FBMiniProfile> friends = await this.GetRStatusSingleFriends("me", access_token);
+            List<FBMiniProfile> friends = await this.GetRStatusSingleFriendsAsync();
+            foreach (var friend in friends)
+            {
+                FBItems.Add(friend);
+                Debug.WriteLine("Added {0}", friend.name);
+            }
         }
 
 
@@ -123,9 +125,12 @@ namespace FBReader.Services
            
         }
 
-        public async Task<List<FBMiniProfile>> GetRStatusSingleFriends(string username, string access_token)
+        private async Task<List<FBMiniProfile>> GetRStatusSingleFriendsAsync()
         {
-            
+            Task<string> getAccessTokenTask = this.authService.FetchAuthToken();
+            string access_token = await getAccessTokenTask;
+            string username = "me";
+
             FBProfile userProfile = await FetchUserProfile(username, access_token);
 
             List <FBMiniProfile> resultProfiles = new List<FBMiniProfile>();
