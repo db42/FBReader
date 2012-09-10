@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Web.Syndication;
@@ -77,17 +75,6 @@ namespace FBReader.Services
             return httpClient;
         }
 
-        private static object parseJson(byte[] jsonResponse, Type returnObjectType)
-        {
-
-            MemoryStream stream = new MemoryStream(jsonResponse);
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(returnObjectType);
-
-            Object returnObject;
-            returnObject = ser.ReadObject(stream);
-
-            return returnObject;
-        }
 
         private string constructProfileUrl(string username, string access_token)
         {
@@ -101,7 +88,7 @@ namespace FBReader.Services
 
                 string url = constructProfileUrl(username, access_token);
                 var jsonResponse = await httpClient.GetByteArrayAsync(url);
-                FBProfile profile = (FBProfile)parseJson(jsonResponse, typeof(FBProfile));
+                FBProfile profile = (FBProfile)JsonHelper.ParseJson(jsonResponse, typeof(FBProfile));
                 Debug.WriteLine("response {0}", profile.name);
                 return profile;
 
@@ -143,9 +130,6 @@ namespace FBReader.Services
 
             return resultProfiles;
         }
-
-
-
     }
 
 }
