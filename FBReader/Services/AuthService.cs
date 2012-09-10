@@ -31,24 +31,21 @@ namespace FBReader.Services
                 System.Uri StartUri = new Uri(FacebookURL);
                 System.Uri EndUri = new Uri(FacebookCallbackUrl);
 
-                WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(
-                                                        WebAuthenticationOptions.None,
-                                                        StartUri,
-                                                        EndUri);
-                if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
+                WebAuthenticationResult webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
+                if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
                     System.Diagnostics.Debug.WriteLine("Authentication Success");
-                    access_token = WebAuthenticationResult.ResponseData.ToString().Substring(WebAuthenticationResult.ResponseData.ToString().IndexOf('#') + 1);
+                    access_token = webAuthenticationResult.ResponseData.ToString().Substring(webAuthenticationResult.ResponseData.ToString().IndexOf('#') + 1);
                     System.Diagnostics.Debug.WriteLine("\nAcess Token is =" + access_token);
 
                 }
-                else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
+                else if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 {
-                    System.Diagnostics.Debug.WriteLine("HTTP Error returned by AuthenticateAsync() : " + WebAuthenticationResult.ResponseErrorDetail.ToString());
+                    System.Diagnostics.Debug.WriteLine("HTTP Error returned by AuthenticateAsync() : " + webAuthenticationResult.ResponseErrorDetail.ToString());
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Error returned by AuthenticateAsync() : " + WebAuthenticationResult.ResponseStatus.ToString());
+                    System.Diagnostics.Debug.WriteLine("Error returned by AuthenticateAsync() : " + webAuthenticationResult.ResponseStatus.ToString());
 
                 }
             }
