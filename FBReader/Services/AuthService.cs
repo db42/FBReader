@@ -9,8 +9,8 @@ namespace FBReader.Services
 {
     public class AuthService
     {
-        private String FacebookClientID = "328608250568415";
-        private String FacebookCallbackUrl = "https://www.facebook.com/connect/login_success.html";
+        private const string FacebookClientID = "328608250568415";
+        private const string FacebookCallbackUrl = "https://www.facebook.com/connect/login_success.html";
 
         public AuthService()
         {
