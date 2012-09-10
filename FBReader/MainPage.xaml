@@ -34,16 +34,28 @@
             
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="120" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="160" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0" DataContext="{Binding ElementName=ItemListView,Path=SelectedItem}">
-                    <TextBlock Text="{Binding name}">
-                        
-                    </TextBlock>
+                <Grid Grid.Row="0" >
+                    <Image Source="{Binding ElementName=ImagesScrollView,Path=SelectedItem}" />
+                </Grid>
+                <Grid Grid.Row="1">
+                    <ListBox  x:Name="ImagesScrollView" FlowDirection="LeftToRight" ItemsSource="{Binding ElementName=ItemListView,Path=SelectedItem.urls}">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                            
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Image Width="100" Height="100" VerticalAlignment="Center" Source="{Binding}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                     
                 </Grid>
-                <Grid Grid.Row="1"/>
 
             </Grid>
             

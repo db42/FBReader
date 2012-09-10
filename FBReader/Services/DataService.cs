@@ -17,6 +17,7 @@ namespace FBReader.Services
         public string name { get; set; }
         public string gender { get; set; }
         public string relationship_status { get; set; }
+        public string[] urls { get; set; }
 
     }
 
