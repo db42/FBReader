@@ -9,6 +9,45 @@
     mc:Ignorable="d">
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="120" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Column="0">
+                <ListView x:Name="ItemListView" ItemsSource="{Binding Path=FBItems}" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding name}">           
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                        
+                    
+                </ListView>
+            </Grid>
+            
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="120" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" DataContext="{Binding ElementName=ItemListView,Path=SelectedItem}">
+                    <TextBlock Text="{Binding name}">
+                        
+                    </TextBlock>
+                    
+                </Grid>
+                <Grid Grid.Row="1"/>
+
+            </Grid>
+            
+        </Grid>
 
     </Grid>
 </Page>
