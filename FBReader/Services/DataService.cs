@@ -17,7 +17,7 @@ namespace FBReader.Services
         public string name { get; set; }
         public string gender { get; set; }
         public string relationship_status { get; set; }
-        public string[] urls { get; set; }
+        public ObservableCollection<string> urls { get; set; }
 
     }
 
@@ -123,21 +123,23 @@ namespace FBReader.Services
            
         }
 
-        private async Task<string[]> FetchImageUrls(string userid, string access_token)
+        private async void FetchImageUrls(ObservableCollection<string> urls, string userid, string access_token)
         {
             try
             {
                 string albumsUrl = _baseurl + userid + "/albums/?" + access_token;
                 var jsonResponse = await httpClient.GetByteArrayAsync(albumsUrl);
                 string profilePhotosAlbumId = null;
-                string[] imageUrls = null;
                 Debug.WriteLine("album url {0}", albumsUrl);
 
                 JsonAlbumContainer albumContainer = (JsonAlbumContainer)JsonHelper.ParseJson(jsonResponse, typeof(JsonAlbumContainer));
                 Debug.WriteLine("data length {0}", albumContainer.data.Length);
 
                 if (albumContainer == null || albumContainer.data.Length == 0)
-                    return new string[] { "https://graph.facebook.com/" + userid + "/picture?type=large" };
+                {
+                    urls.Add("https://graph.facebook.com/" + userid + "/picture?type=large");
+                    return;
+                }
                 
                 foreach (var album in albumContainer.data)
                 {
@@ -153,19 +155,18 @@ namespace FBReader.Services
                     jsonResponse = await httpClient.GetByteArrayAsync(profilePhotosUrl);
                     JsonPhotoContainer photoContainer = (JsonPhotoContainer)JsonHelper.ParseJson(jsonResponse, typeof(JsonPhotoContainer));
                     Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
-                    imageUrls = new string[photoContainer.data.Length];
-                    for (int i = 0; i < imageUrls.Length; i++)
+                    foreach (var photo in photoContainer.data)
                     {
-                        imageUrls[i] = photoContainer.data[i].source;
+                        urls.Add(photo.source);
                     }
                 }
-                return imageUrls;
+                return;
 
             }
             catch (HttpRequestException hre)
             {
                 Debug.WriteLine("http exception {0}", hre.ToString());
-                return null;
+                return;
             }
         }
         public async void GetRStatusSingleFriendsAsync()
@@ -181,7 +182,8 @@ namespace FBReader.Services
                 if (IsGirlWithRStatusSingle(profile))
                 {
                     Debug.WriteLine("id {0}", profile.id);
-                    profile.urls = await FetchImageUrls(profile.id, access_token);
+                    profile.urls = new ObservableCollection<string>();
+                    FetchImageUrls(profile.urls, profile.id, access_token);
                     FBItems.Add(profile);
                 }
             }
