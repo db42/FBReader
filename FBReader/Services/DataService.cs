@@ -79,17 +79,6 @@ namespace FBReader.Services
             this.httpClient = getHttpClient();
         }
 
-        public async void FetchRStatusSingleFriendsAsync()
-        {
-            List<FBMiniProfile> friends = await this.GetRStatusSingleFriendsAsync();
-            foreach (var friend in friends)
-            {
-                FBItems.Add(friend);
-                Debug.WriteLine("Added {0}", friend.name);
-            }
-        }
-
-
         private static HttpClient getHttpClient()
         {
             HttpClient httpClient = new HttpClient();
@@ -179,7 +168,7 @@ namespace FBReader.Services
                 return null;
             }
         }
-        private async Task<List<FBMiniProfile>> GetRStatusSingleFriendsAsync()
+        public async void GetRStatusSingleFriendsAsync()
         {
             Task<string> getAccessTokenTask = this.authService.FetchAuthToken();
             string access_token = await getAccessTokenTask;
@@ -187,19 +176,16 @@ namespace FBReader.Services
 
             FBProfile userProfile = await FetchUserProfile(username, access_token);
 
-            List <FBMiniProfile> resultProfiles = new List<FBMiniProfile>();
-
             foreach (var profile in userProfile.friends.data)
             {
                 if (IsGirlWithRStatusSingle(profile))
                 {
                     Debug.WriteLine("id {0}", profile.id);
                     profile.urls = await FetchImageUrls(profile.id, access_token);
-                    resultProfiles.Add(profile);
+                    FBItems.Add(profile);
                 }
             }
 
-            return resultProfiles;
         }
     }
 

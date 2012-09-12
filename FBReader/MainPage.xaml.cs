@@ -26,7 +26,7 @@ namespace FBReader
         {
             this.InitializeComponent();
             FBData fbData = (FBData)App.Current.Resources["fbData"];
-            fbData.FetchRStatusSingleFriendsAsync();
+            fbData.GetRStatusSingleFriendsAsync();
         }
 
         /// <summary>
