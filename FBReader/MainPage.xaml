@@ -38,7 +38,7 @@
                     <RowDefinition Height="160" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" >
-                    <Image Source="{Binding ElementName=ImagesScrollView,Path=SelectedItem}" />
+                    <Image Source="{Binding ElementName=ImagesScrollView,Path=SelectedItem.large_pic_url}" />
                 </Grid>
                 <Grid Grid.Row="1">
                     <ListBox  x:Name="ImagesScrollView" FlowDirection="LeftToRight" ItemsSource="{Binding ElementName=ItemListView,Path=SelectedItem.urls}">
@@ -50,7 +50,7 @@
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Image Width="100" Height="100" VerticalAlignment="Center" Source="{Binding}"/>
+                                <Image Width="100" Height="100" VerticalAlignment="Center" Source="{Binding small_pic_url}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

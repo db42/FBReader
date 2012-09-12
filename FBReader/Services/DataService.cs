@@ -11,13 +11,40 @@ using Windows.Web.Syndication;
 
 namespace FBReader.Services
 {
+    public struct imageUrl
+    {
+        private string _small_pic_url;
+        public string small_pic_url 
+        {
+            get { return _small_pic_url; }
+
+        }
+        private string _large_pic_url;
+        public string large_pic_url 
+        {
+            get { return _large_pic_url; } 
+        }
+
+        public imageUrl(string small_pic, string large_pic)
+        {
+            _small_pic_url = small_pic;
+            _large_pic_url = large_pic;
+        }
+    }
+
     public class FBMiniProfile
     {
+        
         public string id {get; set;}
         public string name { get; set; }
         public string gender { get; set; }
         public string relationship_status { get; set; }
-        public ObservableCollection<string> urls { get; set; }
+        private ObservableCollection<imageUrl> _urls = new ObservableCollection<imageUrl>();
+        public ObservableCollection<imageUrl> urls 
+        {
+            get { return _urls; }
+            set { _urls = value; }
+        }
 
     }
 
@@ -50,6 +77,7 @@ namespace FBReader.Services
     {
         public class Photo
         {
+            public string picture { get; set; }
             public string source { get; set; }
         }
 
@@ -123,7 +151,7 @@ namespace FBReader.Services
            
         }
 
-        private async void FetchImageUrls(ObservableCollection<string> urls, string userid, string access_token)
+        private async void FetchImageUrls(ObservableCollection<imageUrl> urls, string userid, string access_token)
         {
             try
             {
@@ -137,7 +165,10 @@ namespace FBReader.Services
 
                 if (albumContainer == null || albumContainer.data.Length == 0)
                 {
-                    urls.Add("https://graph.facebook.com/" + userid + "/picture?type=large");
+                    string large_pic_url = "https://graph.facebook.com/" + userid + "/picture?type=large";
+                    string small_pic_url = "https://graph.facebook.com/" + userid + "/picture";
+                    imageUrl image = new imageUrl(small_pic_url, large_pic_url);
+                    urls.Add(image);
                     return;
                 }
                 
@@ -157,7 +188,10 @@ namespace FBReader.Services
                     Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
                     foreach (var photo in photoContainer.data)
                     {
-                        urls.Add(photo.source);
+                        string large_pic_url = photo.source;
+                        string small_pic_url = photo.picture;
+                        imageUrl image = new imageUrl(small_pic_url, large_pic_url);
+                        urls.Add(image);
                     }
                 }
                 return;
@@ -182,7 +216,6 @@ namespace FBReader.Services
                 if (IsGirlWithRStatusSingle(profile))
                 {
                     Debug.WriteLine("id {0}", profile.id);
-                    profile.urls = new ObservableCollection<string>();
                     FetchImageUrls(profile.urls, profile.id, access_token);
                     FBItems.Add(profile);
                 }
