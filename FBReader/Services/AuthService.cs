@@ -21,7 +21,7 @@ namespace FBReader.Services
             try
             {
                 String FacebookURL = "https://www.facebook.com/dialog/oauth?client_id=" + Uri.EscapeDataString(FacebookClientID) +
-                   "&redirect_uri=" + Uri.EscapeDataString(FacebookCallbackUrl) + "&scope=read_stream,user_relationship_details,user_relationships,friends_relationships,user_online_presence&display=popup&response_type=token";
+                   "&redirect_uri=" + Uri.EscapeDataString(FacebookCallbackUrl) + "&scope=read_stream,user_relationship_details,user_relationships,friends_photos,friends_relationships,user_online_presence&display=popup&response_type=token";
                 System.Uri StartUri = new Uri(FacebookURL);
                 System.Uri EndUri = new Uri(FacebookCallbackUrl);
 
