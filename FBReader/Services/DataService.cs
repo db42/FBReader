@@ -35,6 +35,27 @@ namespace FBReader.Services
         public FriendsListContainer friends;
     }
 
+    public class JsonAlbumContainer
+    {
+        public class Album
+        {
+            public string id { get; set; }
+            public string name { get; set; }            
+        }
+
+        public Album[] data { get; set; }
+    }
+
+    public class JsonPhotoContainer
+    {
+        public class Photo
+        {
+            public string source { get; set; }
+        }
+
+        public Photo[] data { get; set; }
+    }
+
     
 
     public class FBData
@@ -113,6 +134,51 @@ namespace FBReader.Services
            
         }
 
+        private async Task<string[]> FetchImageUrls(string userid, string access_token)
+        {
+            try
+            {
+                string albumsUrl = _baseurl + userid + "/albums/?" + access_token;
+                var jsonResponse = await httpClient.GetByteArrayAsync(albumsUrl);
+                string profilePhotosAlbumId = null;
+                string[] imageUrls = null;
+                Debug.WriteLine("album url {0}", albumsUrl);
+
+                JsonAlbumContainer albumContainer = (JsonAlbumContainer)JsonHelper.ParseJson(jsonResponse, typeof(JsonAlbumContainer));
+                Debug.WriteLine("data length {0}", albumContainer.data.Length);
+
+                if (albumContainer == null || albumContainer.data.Length == 0)
+                    return new string[] { "https://graph.facebook.com/" + userid + "/picture?type=large" };
+                
+                foreach (var album in albumContainer.data)
+                {
+                    if (album.name.Equals("Profile Pictures"))
+                    {
+                        profilePhotosAlbumId = album.id;
+                    }
+                }
+
+                if (profilePhotosAlbumId != null)
+                {
+                    string profilePhotosUrl = _baseurl + profilePhotosAlbumId + "/photos/";
+                    jsonResponse = await httpClient.GetByteArrayAsync(profilePhotosUrl);
+                    JsonPhotoContainer photoContainer = (JsonPhotoContainer)JsonHelper.ParseJson(jsonResponse, typeof(JsonPhotoContainer));
+                    Debug.WriteLine("fetched photos {0}", photoContainer.data);
+                    imageUrls = new string[photoContainer.data.Length];
+                    for (int i = 0; i < imageUrls.Length; i++)
+                    {
+                        imageUrls[i] = photoContainer.data[i].source;
+                    }
+                }
+                return imageUrls;
+
+            }
+            catch (HttpRequestException hre)
+            {
+                Debug.WriteLine("http exception {0}", hre.ToString());
+                return null;
+            }
+        }
         private async Task<List<FBMiniProfile>> GetRStatusSingleFriendsAsync()
         {
             Task<string> getAccessTokenTask = this.authService.FetchAuthToken();
@@ -126,7 +192,11 @@ namespace FBReader.Services
             foreach (var profile in userProfile.friends.data)
             {
                 if (IsGirlWithRStatusSingle(profile))
+                {
+                    Debug.WriteLine("id {0}", profile.id);
+                    profile.urls = await FetchImageUrls(profile.id, access_token);
                     resultProfiles.Add(profile);
+                }
             }
 
             return resultProfiles;
