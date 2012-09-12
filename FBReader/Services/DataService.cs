@@ -149,10 +149,10 @@ namespace FBReader.Services
 
                 if (profilePhotosAlbumId != null)
                 {
-                    string profilePhotosUrl = _baseurl + profilePhotosAlbumId + "/photos/";
+                    string profilePhotosUrl = _baseurl + profilePhotosAlbumId + "/photos?" + access_token;
                     jsonResponse = await httpClient.GetByteArrayAsync(profilePhotosUrl);
                     JsonPhotoContainer photoContainer = (JsonPhotoContainer)JsonHelper.ParseJson(jsonResponse, typeof(JsonPhotoContainer));
-                    Debug.WriteLine("fetched photos {0}", photoContainer.data);
+                    Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
                     imageUrls = new string[photoContainer.data.Length];
                     for (int i = 0; i < imageUrls.Length; i++)
                     {
