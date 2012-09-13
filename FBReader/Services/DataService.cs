@@ -6,86 +6,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using FBReader.Models;
+using FBReader.Models.Json;
 using Windows.Web.Syndication;
 
 
 namespace FBReader.Services
 {
-    public struct imageUrl
-    {
-        private string _small_pic_url;
-        public string small_pic_url 
-        {
-            get { return _small_pic_url; }
-
-        }
-        private string _large_pic_url;
-        public string large_pic_url 
-        {
-            get { return _large_pic_url; } 
-        }
-
-        public imageUrl(string small_pic, string large_pic)
-        {
-            _small_pic_url = small_pic;
-            _large_pic_url = large_pic;
-        }
-    }
-
-    public class FBMiniProfile
-    {
-        
-        public string id {get; set;}
-        public string name { get; set; }
-        public string gender { get; set; }
-        public string relationship_status { get; set; }
-        private ObservableCollection<imageUrl> _urls = new ObservableCollection<imageUrl>();
-        public ObservableCollection<imageUrl> urls 
-        {
-            get { return _urls; }
-            set { _urls = value; }
-        }
-
-    }
-
-    public class FBProfile : FBMiniProfile
-    {
-        public class FriendsListContainer
-        {
-            public List<FBMiniProfile> data;
-        }
-        public string first_name;
-        public string last_name;
-        public string link;
-        public string username;
-        public string locale;
-        public FriendsListContainer friends;
-    }
-
-    public class JsonAlbumContainer
-    {
-        public class Album
-        {
-            public string id { get; set; }
-            public string name { get; set; }            
-        }
-
-        public Album[] data { get; set; }
-    }
-
-    public class JsonPhotoContainer
-    {
-        public class Photo
-        {
-            public string picture { get; set; }
-            public string source { get; set; }
-        }
-
-        public Photo[] data { get; set; }
-    }
-
-    
-
     public class FBData
     {
         private const string _baseurl = "https://graph.facebook.com/";
@@ -128,7 +55,6 @@ namespace FBReader.Services
                 string url = constructProfileUrl(username, access_token);
                 var jsonResponse = await httpClient.GetByteArrayAsync(url);
                 FBProfile profile = (FBProfile)JsonHelper.ParseJson(jsonResponse, typeof(FBProfile));
-                Debug.WriteLine("response {0}", profile.name);
                 return profile;
 
             }
