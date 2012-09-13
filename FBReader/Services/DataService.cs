@@ -17,14 +17,13 @@ namespace FBReader.Services
     {
         private const string _baseurl = "https://graph.facebook.com/";
 
-        private HttpClient httpClient;
-        private AuthService authService;
+        private readonly HttpClient httpClient;
+        private readonly AuthService authService;
 
         private ObservableCollection<FBMiniProfile> _ProfilesList = new ObservableCollection<FBMiniProfile>();
         public ObservableCollection<FBMiniProfile> ProfilesList
         {
             get { return _ProfilesList; }
-            set { _ProfilesList = value; }
         }
 
 
