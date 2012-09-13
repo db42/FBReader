@@ -30,7 +30,6 @@ namespace FBReader.Models
 
     public class FBMiniProfile
     {
-        
         public string id {get; set;}
         public string name { get; set; }
         public string gender { get; set; }
@@ -39,8 +38,6 @@ namespace FBReader.Models
         public ObservableCollection<imageUrl> urls 
         {
             get { return _urls; }
-            set { _urls = value; }
         }
-
     }
 }
