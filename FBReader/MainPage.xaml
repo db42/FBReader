@@ -20,7 +20,7 @@
             </Grid.ColumnDefinitions>
             
             <Grid Grid.Column="0">
-                <ListView x:Name="ItemListView" ItemsSource="{Binding}" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <ListView x:Name="ItemListView" ItemsSource="{Binding Path=FBItems}" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding name}">           
