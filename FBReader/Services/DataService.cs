@@ -93,11 +93,11 @@ namespace FBReader.Services
         private HttpClient httpClient;
         private AuthService authService;
 
-        private ObservableCollection<FBMiniProfile> _FBItems = new ObservableCollection<FBMiniProfile>();
-        public ObservableCollection<FBMiniProfile> FBItems
+        private ObservableCollection<FBMiniProfile> _ProfilesList = new ObservableCollection<FBMiniProfile>();
+        public ObservableCollection<FBMiniProfile> ProfilesList
         {
-            get { return _FBItems; }
-            set { _FBItems = value; }
+            get { return _ProfilesList; }
+            set { _ProfilesList = value; }
         }
 
 
@@ -217,7 +217,7 @@ namespace FBReader.Services
                 {
                     Debug.WriteLine("id {0}", profile.id);
                     FetchImageUrls(profile.urls, profile.id, access_token);
-                    FBItems.Add(profile);
+                    ProfilesList.Add(profile);
                 }
             }
 
