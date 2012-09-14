@@ -60,7 +60,7 @@ namespace FBReader.Services
         {
             Task<bool> authTokenCheckTask = isAuthTokenValidForUser("me");
             bool isAuthTokenValid = await authTokenCheckTask;
-            
+
             try
             {
                 String FacebookURL = "https://www.facebook.com/dialog/oauth?client_id=" + Uri.EscapeDataString(FacebookClientID) +
@@ -68,7 +68,7 @@ namespace FBReader.Services
                 System.Uri StartUri = new Uri(FacebookURL);
                 System.Uri EndUri = new Uri(FacebookCallbackUrl);
                 WebAuthenticationResult webAuthenticationResult;
-                
+
                 if (isAuthTokenValid == false)
                 {
                     webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
@@ -102,5 +102,14 @@ namespace FBReader.Services
                 return null;
             }
         }
+
+        public static void facebookLogout()
+        {
+            var stored_access_token = Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"];
+            if (stored_access_token == null) return;
+            stored_access_token = null;
+        }
+
+
     }
 }

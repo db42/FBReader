@@ -26,7 +26,7 @@ namespace FBReader
         public MainPage()
         {
             this.InitializeComponent();
-            this.DataContext =  new MainPageViewModel();
+            this.DataContext = new MainPageViewModel();
         }
 
         /// <summary>
@@ -36,6 +36,11 @@ namespace FBReader
         /// property is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+        }
+
+        private void logout_button_click(object sender, RoutedEventArgs e)
+        {
+            AuthService.facebookLogout();            
         }
     }
 }
