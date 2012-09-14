@@ -15,10 +15,9 @@ namespace FBReader.Services
 {
     public class FBData
     {
-        private const string _baseurl = "https://graph.facebook.com/";
-
         private readonly HttpClient httpClient;
         private readonly AuthService authService;
+        private readonly UrlGenerator urlGenerator;
 
         private ObservableCollection<FBMiniProfile> _ProfilesList = new ObservableCollection<FBMiniProfile>();
         public ObservableCollection<FBMiniProfile> ProfilesList
@@ -31,6 +30,7 @@ namespace FBReader.Services
         {
             this.authService = new AuthService();
             this.httpClient = getHttpClient();
+            this.urlGenerator = new UrlGenerator();
         }
 
         private static HttpClient getHttpClient()
@@ -41,17 +41,12 @@ namespace FBReader.Services
         }
 
 
-        private string constructProfileUrl(string username, string access_token)
-        {
-            return _baseurl + username + "?" + access_token + "&fields=id,name,relationship_status,friends.fields(relationship_status,gender,name)";
-        }
 
         public async Task<FBProfile> FetchUserProfile(string username, string access_token)
         {
             try
             {
-
-                string url = constructProfileUrl(username, access_token);
+                string url = urlGenerator.constructProfileUrl(username, access_token);
                 var jsonResponse = await httpClient.GetByteArrayAsync(url);
                 FBProfile profile = (FBProfile)JsonHelper.ParseJson(jsonResponse, typeof(FBProfile));
                 return profile;
@@ -80,7 +75,7 @@ namespace FBReader.Services
         {
             try
             {
-                string albumsUrl = _baseurl + userid + "/albums/?" + access_token;
+                string albumsUrl = urlGenerator.constructAlbumsUrl(userid, access_token); 
                 var jsonResponse = await httpClient.GetByteArrayAsync(albumsUrl);
                 string profilePhotosAlbumId = null;
                 Debug.WriteLine("album url {0}", albumsUrl);
@@ -107,7 +102,7 @@ namespace FBReader.Services
 
                 if (profilePhotosAlbumId != null)
                 {
-                    string profilePhotosUrl = _baseurl + profilePhotosAlbumId + "/photos?" + access_token;
+                    string profilePhotosUrl = urlGenerator.constructPhotosUrl(profilePhotosAlbumId, access_token);
                     jsonResponse = await httpClient.GetByteArrayAsync(profilePhotosUrl);
                     JsonPhotoContainer photoContainer = (JsonPhotoContainer)JsonHelper.ParseJson(jsonResponse, typeof(JsonPhotoContainer));
                     Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
