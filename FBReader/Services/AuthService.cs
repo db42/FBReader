@@ -105,9 +105,8 @@ namespace FBReader.Services
 
         public static void facebookLogout()
         {
-            var stored_access_token = Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"];
-            if (stored_access_token == null) return;
-            stored_access_token = null;
+            if (Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"] == null) return;
+            Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"] = null;
         }
 
 
