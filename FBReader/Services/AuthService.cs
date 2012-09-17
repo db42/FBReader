@@ -7,6 +7,7 @@ using System.Net.Http;
 using Windows.Security.Authentication.Web;
 using System.Net;
 using System.IO;
+using System.Diagnostics;
 
 namespace FBReader.Services
 {
@@ -29,13 +30,14 @@ namespace FBReader.Services
             {
                 return false;
             }
-            else access_token = Windows.Storage.ApplicationData.Current.RoamingSettings.Values[user_name].ToString();
+
+            access_token = Windows.Storage.ApplicationData.Current.RoamingSettings.Values[user_name].ToString();
             string _authTokenValidationUrl = urlGenerator.constructValidateAuthUrl(user_name, access_token);
-            System.Diagnostics.Debug.WriteLine("\n\nauthTokenValidation url {0}\n\n", _authTokenValidationUrl);
+            Debug.WriteLine("\n\nauthTokenValidation url {0}\n\n", _authTokenValidationUrl);
             WebRequest request = WebRequest.Create(_authTokenValidationUrl);
             try
             {
-                System.Diagnostics.Debug.WriteLine("\n\nauthTokenValidation url {0}\n\n", _authTokenValidationUrl);
+                Debug.WriteLine("\n\nauthTokenValidation url {0}\n\n", _authTokenValidationUrl);
                 var jsonResponse = await request.GetResponseAsync();
                 return true;
             }
@@ -44,18 +46,18 @@ namespace FBReader.Services
                 using (WebResponse response = e.Response)
                 {
                     HttpWebResponse httpResponse = (HttpWebResponse)response;
-                    System.Diagnostics.Debug.WriteLine("Error code: {0}", httpResponse.StatusCode);
+                    Debug.WriteLine("Error code: {0}", httpResponse.StatusCode);
                     using (Stream data = response.GetResponseStream())
                     {
                         string text = new StreamReader(data).ReadToEnd();
-                        System.Diagnostics.Debug.WriteLine(text);
+                        Debug.WriteLine(text);
                     }
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("\n Exception in isAuthTokenValidForUser  " + ex.ToString());
+                Debug.WriteLine("\n Exception in isAuthTokenValidForUser  " + ex.ToString());
                 return false;
             }
 
@@ -78,28 +80,28 @@ namespace FBReader.Services
                 WebAuthenticationResult webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
-                    System.Diagnostics.Debug.WriteLine("Authentication Success");
+                    Debug.WriteLine("Authentication Success");
                     string access_token = webAuthenticationResult.ResponseData.ToString().Substring(webAuthenticationResult.ResponseData.ToString().IndexOf('#') + 1);
-                    System.Diagnostics.Debug.WriteLine("\nAcess Token is =" + access_token);
+                    Debug.WriteLine("\nAcess Token is =" + access_token);
                     Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"] = access_token;
                     return access_token;
 
                 }
                 else if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 {
-                    System.Diagnostics.Debug.WriteLine("HTTP Error returned by AuthenticateAsync() : " + webAuthenticationResult.ResponseErrorDetail.ToString());
+                    Debug.WriteLine("HTTP Error returned by AuthenticateAsync() : " + webAuthenticationResult.ResponseErrorDetail.ToString());
                     return null;
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Error returned by AuthenticateAsync() : " + webAuthenticationResult.ResponseStatus.ToString());
+                    Debug.WriteLine("Error returned by AuthenticateAsync() : " + webAuthenticationResult.ResponseStatus.ToString());
                     return null;
 
                 }
             }
             catch (Exception Error)
             {
-                System.Diagnostics.Debug.WriteLine(Error.ToString());
+                Debug.WriteLine(Error.ToString());
                 return null;
             }
         }
