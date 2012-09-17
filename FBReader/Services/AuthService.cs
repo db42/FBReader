@@ -14,18 +14,23 @@ namespace FBReader.Services
     {
         private const string FacebookClientID = "328608250568415";
         private const string FacebookCallbackUrl = "https://www.facebook.com/connect/login_success.html";
+        private UrlGenerator urlGenerator;
 
-        public AuthService()
+        public AuthService(UrlGenerator urlGenerator)
         {
+            this.urlGenerator = urlGenerator;
         }
 
 
         public async Task<bool> isAuthTokenValidForUser(string user_name)
         {
             string access_token;
-            if (Windows.Storage.ApplicationData.Current.RoamingSettings.Values[user_name] == null) return false;
+            if (Windows.Storage.ApplicationData.Current.RoamingSettings.Values[user_name] == null)
+            {
+                return false;
+            }
             else access_token = Windows.Storage.ApplicationData.Current.RoamingSettings.Values[user_name].ToString();
-            string _authTokenValidationUrl = "https://graph.facebook.com/" + user_name + "/?" + access_token;
+            string _authTokenValidationUrl = urlGenerator.constructValidateAuthUrl(user_name, access_token);
             System.Diagnostics.Debug.WriteLine("\n\nauthTokenValidation url {0}\n\n", _authTokenValidationUrl);
             WebRequest request = WebRequest.Create(_authTokenValidationUrl);
             try
@@ -60,21 +65,17 @@ namespace FBReader.Services
         {
             Task<bool> authTokenCheckTask = isAuthTokenValidForUser("me");
             bool isAuthTokenValid = await authTokenCheckTask;
+            if (isAuthTokenValid == true)
+            {
+                return Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"].ToString();
+            }
 
             try
             {
-                String FacebookURL = "https://www.facebook.com/dialog/oauth?client_id=" + Uri.EscapeDataString(FacebookClientID) +
-                   "&redirect_uri=" + Uri.EscapeDataString(FacebookCallbackUrl) + "&scope=read_stream,user_relationship_details,user_relationships,friends_photos,friends_relationships,user_online_presence&display=popup&response_type=token";
-                System.Uri StartUri = new Uri(FacebookURL);
+                String FacebookAuthURL = urlGenerator.constructAuthUrl(FacebookClientID, FacebookCallbackUrl);
+                System.Uri StartUri = new Uri(FacebookAuthURL);
                 System.Uri EndUri = new Uri(FacebookCallbackUrl);
-                WebAuthenticationResult webAuthenticationResult;
-
-                if (isAuthTokenValid == false)
-                {
-                    webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
-                }
-                else return Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"].ToString();
-
+                WebAuthenticationResult webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
                     System.Diagnostics.Debug.WriteLine("Authentication Success");
@@ -105,7 +106,6 @@ namespace FBReader.Services
 
         public static void facebookLogout()
         {
-            if (Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"] == null) return;
             Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"] = null;
         }
 

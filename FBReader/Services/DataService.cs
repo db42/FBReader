@@ -28,9 +28,9 @@ namespace FBReader.Services
 
         public FBData()
         {
-            this.authService = new AuthService();
-            this.httpClient = getHttpClient();
             this.urlGenerator = new UrlGenerator();
+            this.authService = new AuthService(this.urlGenerator);
+            this.httpClient = getHttpClient();
         }
 
         private static HttpClient getHttpClient()

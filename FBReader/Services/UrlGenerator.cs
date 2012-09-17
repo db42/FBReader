@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FBReader.Services
 {
-    class UrlGenerator
+    public class UrlGenerator
     {
         private const string _baseurl = "https://graph.facebook.com/";
 
@@ -21,7 +21,19 @@ namespace FBReader.Services
         }
 
         public string constructPhotosUrl(string albumId,string access_token)
-        {            return _baseurl + albumId + "/photos?" + access_token;
+        {
+            return _baseurl + albumId + "/photos?" + access_token;
+        }
+
+        public string constructAuthUrl(string facebookClientID, string facebookCallbackUrl)
+        {
+            return "https://www.facebook.com/dialog/oauth?client_id=" + Uri.EscapeDataString(facebookClientID) +
+                               "&redirect_uri=" + Uri.EscapeDataString(facebookCallbackUrl) + "&scope=read_stream,user_relationship_details,user_relationships,friends_photos,friends_relationships,user_online_presence&display=popup&response_type=token";
+        }
+
+        public string constructValidateAuthUrl(string username, string access_token)
+        {
+            return _baseurl + username + "/?" + access_token;
         }
     }
 }
