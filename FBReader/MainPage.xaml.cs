@@ -26,7 +26,7 @@ namespace FBReader
         public MainPage()
         {
             this.InitializeComponent();
-            this.DataContext =  new MainPageViewModel();
+            //this.DataContext =  new MainPageViewModel();
         }
 
         /// <summary>
