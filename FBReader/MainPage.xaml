@@ -18,6 +18,8 @@
             <RowDefinition Height="120" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+<Button x:Name="LogoutButton" Content="Logout"  HorizontalAlignment="Right"  VerticalAlignment="Center" Click="logout_button_click"/>
+
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200" />
