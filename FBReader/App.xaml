@@ -2,10 +2,15 @@
     x:Class="FBReader.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FBReader.Services">
+    xmlns:local="using:FBReader.Services"
+    RequestedTheme="Light">
 
     <Application.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="ListViewItemSelectedBackgroundThemeBrush" Color="#FFFF851F"></SolidColorBrush>
+            <SolidColorBrush x:Key="ListViewItemPointerOverBackgroundThemeBrush" Color="#FF2BD62B"></SolidColorBrush>
+            <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBackgroundThemeBrush" Color="#FF2BD62B"></SolidColorBrush>
+            <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBorderThemeBrush"  ></SolidColorBrush>
             <ResourceDictionary.MergedDictionaries>
                 
                 <!-- 

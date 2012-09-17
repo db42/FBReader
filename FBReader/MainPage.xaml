@@ -18,11 +18,11 @@
             <RowDefinition Height="120" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-<Button x:Name="LogoutButton" Content="Logout"  HorizontalAlignment="Right"  VerticalAlignment="Center" Click="logout_button_click"/>
+<Button x:Name="LogoutButton" Content="Logout"  HorizontalAlignment="Right"  VerticalAlignment="Center" Click="logout_button_click" Style="{StaticResource TextButtonStyle}" BorderThickness="{StaticResource TextControlBorderThemeThickness}" Margin="0,0,19,0"/>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             
@@ -30,7 +30,7 @@
                 <ListView x:Name="ItemListView" ItemsSource="{Binding Path=FBItems}" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding name}">           
+                            <TextBlock Text="{Binding name}" Foreground="#FFAA7373" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource SnappedPageHeaderTextStyle}" >           
                             </TextBlock>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -42,13 +42,14 @@
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="160" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" >
                     <Image Source="{Binding ElementName=ImagesScrollView,Path=SelectedItem.large_pic_url}" />
                 </Grid>
                 <Grid Grid.Row="1">
-                    <ListBox  x:Name="ImagesScrollView" FlowDirection="LeftToRight" ItemsSource="{Binding ElementName=ItemListView,Path=SelectedItem.urls}">
+                    <ListBox  x:Name="ImagesScrollView" FlowDirection="LeftToRight" ItemsSource="{Binding ElementName=ItemListView,Path=SelectedItem.urls}"
+                              ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal" />
