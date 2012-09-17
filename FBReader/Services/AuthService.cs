@@ -23,16 +23,16 @@ namespace FBReader.Services
         }
 
 
-        public async Task<bool> isAuthTokenValidForUser(string user_name)
+        public async Task<bool> isAuthTokenValidForUser()
         {
             string access_token;
-            if (Windows.Storage.ApplicationData.Current.RoamingSettings.Values[user_name] == null)
+            if (Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"] == null)
             {
                 return false;
             }
 
-            access_token = Windows.Storage.ApplicationData.Current.RoamingSettings.Values[user_name].ToString();
-            string _authTokenValidationUrl = urlGenerator.constructValidateAuthUrl(user_name, access_token);
+            access_token = Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"].ToString();
+            string _authTokenValidationUrl = urlGenerator.constructValidateAuthUrl(access_token);
             Debug.WriteLine("\n\nauthTokenValidation url {0}\n\n", _authTokenValidationUrl);
             WebRequest request = WebRequest.Create(_authTokenValidationUrl);
             try
@@ -65,11 +65,11 @@ namespace FBReader.Services
 
         public async Task<string> FetchAuthToken()
         {
-            Task<bool> authTokenCheckTask = isAuthTokenValidForUser("me");
+            Task<bool> authTokenCheckTask = isAuthTokenValidForUser();
             bool isAuthTokenValid = await authTokenCheckTask;
             if (isAuthTokenValid == true)
             {
-                return Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"].ToString();
+                return Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"].ToString();
             }
 
             try
@@ -83,7 +83,7 @@ namespace FBReader.Services
                     Debug.WriteLine("Authentication Success");
                     string access_token = webAuthenticationResult.ResponseData.ToString().Substring(webAuthenticationResult.ResponseData.ToString().IndexOf('#') + 1);
                     Debug.WriteLine("\nAcess Token is =" + access_token);
-                    Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"] = access_token;
+                    Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"] = access_token;
                     return access_token;
 
                 }
@@ -108,7 +108,7 @@ namespace FBReader.Services
 
         public static void facebookLogout()
         {
-            Windows.Storage.ApplicationData.Current.RoamingSettings.Values["me"] = null;
+            Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"] = null;
         }
 
 
