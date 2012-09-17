@@ -17,8 +17,6 @@ namespace FBReader.ViewModels
         {
             FBData fbData = (FBData)App.Current.Resources["fbData"];
             this.FBItems = fbData.ProfilesList;
-
-            fbData.GetRStatusSingleFriendsAsync();
         }
     }
 }

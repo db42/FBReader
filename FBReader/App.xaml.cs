@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FBReader.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -52,6 +53,15 @@ namespace FBReader
             if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
                 //TODO: Load state from previously suspended application
+            }
+
+            FBData fbData = (FBData)App.Current.Resources["fbData"];
+            if (fbData != null)
+            {
+                if (fbData.ProfilesList.Count == 0)
+                {
+                    fbData.GetRStatusSingleFriendsAsync();
+                }
             }
 
             // Create a Frame to act navigation context and navigate to the first page
