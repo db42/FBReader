@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,14 @@ namespace FBReader.ViewModels
         {
             FBData fbData = (FBData)App.Current.Resources["fbData"];
             this.FBItems = fbData.ProfilesList;
+        }
+
+        public void RefreshFBItems()
+        {
+            FBData fbData = (FBData)App.Current.Resources["fbData"];
+            fbData.ProfilesList.Clear();
+            Debug.WriteLine("Cleared Fb items list");
+            fbData.GetRStatusSingleFriendsAsync();
         }
     }
 }

@@ -41,7 +41,8 @@ namespace FBReader
         private void logout_button_click(object sender, RoutedEventArgs e)
         {
             AuthService.facebookLogout();
-            this.Frame.Navigate(typeof(MainPage));
+            MainPageViewModel vm = this.DataContext as MainPageViewModel;
+            vm.RefreshFBItems();
         }
 
     }
