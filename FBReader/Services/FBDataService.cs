@@ -18,6 +18,7 @@ namespace FBReader.Services
         private readonly HttpClient httpClient;
         private readonly AuthService authService;
         private readonly UrlGenerator urlGenerator;
+        private readonly JsonHelper jsonHelper;
 
         private ObservableCollection<FBMiniProfile> _ProfilesList = new ObservableCollection<FBMiniProfile>();
         public ObservableCollection<FBMiniProfile> ProfilesList
@@ -26,17 +27,18 @@ namespace FBReader.Services
         }
 
 
-        public FBDataService(UrlGenerator urlGenerator, AuthService authService)
+        public FBDataService(UrlGenerator urlGenerator, AuthService authService, JsonHelper jsonHelper, HttpClient httpClient)
         {
             this.urlGenerator = urlGenerator;
             this.authService = authService;
-            this.httpClient = getHttpClient();
+            this.jsonHelper = jsonHelper;
+            this.httpClient = httpClient;
         }
 
         private static HttpClient getHttpClient()
         {
             HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+            //httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
             return httpClient;
         }
 
@@ -48,7 +50,7 @@ namespace FBReader.Services
             {
                 string url = urlGenerator.constructProfileUrl(username, access_token);
                 var jsonResponse = await httpClient.GetByteArrayAsync(url);
-                FBProfile profile = (FBProfile)JsonHelper.ParseJson(jsonResponse, typeof(FBProfile));
+                FBProfile profile = (FBProfile)jsonHelper.ParseJson(jsonResponse, typeof(FBProfile));
                 return profile;
 
             }
@@ -80,7 +82,7 @@ namespace FBReader.Services
                 string profilePhotosAlbumId = null;
                 Debug.WriteLine("album url {0}", albumsUrl);
 
-                JsonAlbumContainer albumContainer = (JsonAlbumContainer)JsonHelper.ParseJson(jsonResponse, typeof(JsonAlbumContainer));
+                JsonAlbumContainer albumContainer = (JsonAlbumContainer)jsonHelper.ParseJson(jsonResponse, typeof(JsonAlbumContainer));
                 Debug.WriteLine("data length {0}", albumContainer.data.Length);
 
                 if (albumContainer == null || albumContainer.data.Length == 0)
@@ -104,7 +106,7 @@ namespace FBReader.Services
                 {
                     string profilePhotosUrl = urlGenerator.constructPhotosUrl(profilePhotosAlbumId, access_token);
                     jsonResponse = await httpClient.GetByteArrayAsync(profilePhotosUrl);
-                    JsonPhotoContainer photoContainer = (JsonPhotoContainer)JsonHelper.ParseJson(jsonResponse, typeof(JsonPhotoContainer));
+                    JsonPhotoContainer photoContainer = (JsonPhotoContainer)jsonHelper.ParseJson(jsonResponse, typeof(JsonPhotoContainer));
                     Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
                     foreach (var photo in photoContainer.data)
                     {

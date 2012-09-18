@@ -12,6 +12,7 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using System.Net.Http;
 using FBReader.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
@@ -35,6 +36,7 @@ namespace FBReader.ViewModel
             //Register Services
             SimpleIoc.Default.Register<UrlGenerator>();
             SimpleIoc.Default.Register<JsonHelper>();
+            SimpleIoc.Default.Register<HttpClient>(() => { return new HttpClient(); });
             SimpleIoc.Default.Register<AuthService>();
             SimpleIoc.Default.Register<FBDataService>();
             ////if (ViewModelBase.IsInDesignModeStatic)

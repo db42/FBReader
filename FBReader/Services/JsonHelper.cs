@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace FBReader.Services
 {
-    class JsonHelper
+    public class JsonHelper
     {
-        public static object ParseJson(byte[] jsonResponse, Type returnObjectType)
+        public object ParseJson(byte[] jsonResponse, Type returnObjectType)
         {
 
             MemoryStream stream = new MemoryStream(jsonResponse);
