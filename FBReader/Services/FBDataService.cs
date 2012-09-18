@@ -35,15 +35,6 @@ namespace FBReader.Services
             this.httpClient = httpClient;
         }
 
-        private static HttpClient getHttpClient()
-        {
-            HttpClient httpClient = new HttpClient();
-            //httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-            return httpClient;
-        }
-
-
-
         public async Task<FBProfile> FetchUserProfile(string username, string access_token)
         {
             try
