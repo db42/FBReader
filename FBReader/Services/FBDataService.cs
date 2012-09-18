@@ -26,7 +26,6 @@ namespace FBReader.Services
             get { return _ProfilesList; }
         }
 
-
         public FBDataService(UrlGenerator urlGenerator, AuthService authService, JsonHelper jsonHelper, HttpClient httpClient)
         {
             this.urlGenerator = urlGenerator;
@@ -37,18 +36,23 @@ namespace FBReader.Services
 
         public async Task<FBProfile> FetchUserProfile(string username, string access_token)
         {
+            string url = urlGenerator.constructProfileUrl(username, access_token);
+            return await FetchParseJson<FBProfile>(url);
+        }
+
+        private async Task<T> FetchParseJson<T>(string url)
+        {
             try
             {
-                string url = urlGenerator.constructProfileUrl(username, access_token);
                 var jsonResponse = await httpClient.GetByteArrayAsync(url);
-                FBProfile profile = (FBProfile)jsonHelper.ParseJson(jsonResponse, typeof(FBProfile));
+                T profile = (T)jsonHelper.ParseJson(jsonResponse, typeof(T));
                 return profile;
 
             }
             catch (HttpRequestException hre)
             {
                 Debug.WriteLine("http exception {0}", hre.ToString());
-                return null;
+                return default(T);
             }
         }
 
@@ -66,56 +70,44 @@ namespace FBReader.Services
 
         private async void FetchImageUrls(ObservableCollection<imageUrl> urls, string userid, string access_token)
         {
-            try
+            string albumsUrl = urlGenerator.constructAlbumsUrl(userid, access_token); 
+            string profilePhotosAlbumId = null;
+            Debug.WriteLine("album url {0}", albumsUrl);
+
+            JsonAlbumContainer albumContainer = await FetchParseJson<JsonAlbumContainer>(albumsUrl);
+            if (albumContainer == null || albumContainer.data.Length == 0)
             {
-                string albumsUrl = urlGenerator.constructAlbumsUrl(userid, access_token); 
-                var jsonResponse = await httpClient.GetByteArrayAsync(albumsUrl);
-                string profilePhotosAlbumId = null;
-                Debug.WriteLine("album url {0}", albumsUrl);
-
-                JsonAlbumContainer albumContainer = (JsonAlbumContainer)jsonHelper.ParseJson(jsonResponse, typeof(JsonAlbumContainer));
-                Debug.WriteLine("data length {0}", albumContainer.data.Length);
-
-                if (albumContainer == null || albumContainer.data.Length == 0)
+                string large_pic_url = "https://graph.facebook.com/" + userid + "/picture?type=large";
+                string small_pic_url = "https://graph.facebook.com/" + userid + "/picture";
+                imageUrl image = new imageUrl(small_pic_url, large_pic_url);
+                urls.Add(image);
+                return;
+            }
+            
+            foreach (var album in albumContainer.data)
+            {
+                if (album.name.Equals("Profile Pictures"))
                 {
-                    string large_pic_url = "https://graph.facebook.com/" + userid + "/picture?type=large";
-                    string small_pic_url = "https://graph.facebook.com/" + userid + "/picture";
+                    profilePhotosAlbumId = album.id;
+                }
+            }
+
+            if (profilePhotosAlbumId != null)
+            {
+                string profilePhotosUrl = urlGenerator.constructPhotosUrl(profilePhotosAlbumId, access_token);
+                JsonPhotoContainer photoContainer = await FetchParseJson<JsonPhotoContainer>(profilePhotosUrl);
+                Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
+                foreach (var photo in photoContainer.data)
+                {
+                    string large_pic_url = photo.source;
+                    string small_pic_url = photo.picture;
                     imageUrl image = new imageUrl(small_pic_url, large_pic_url);
                     urls.Add(image);
-                    return;
                 }
-                
-                foreach (var album in albumContainer.data)
-                {
-                    if (album.name.Equals("Profile Pictures"))
-                    {
-                        profilePhotosAlbumId = album.id;
-                    }
-                }
-
-                if (profilePhotosAlbumId != null)
-                {
-                    string profilePhotosUrl = urlGenerator.constructPhotosUrl(profilePhotosAlbumId, access_token);
-                    jsonResponse = await httpClient.GetByteArrayAsync(profilePhotosUrl);
-                    JsonPhotoContainer photoContainer = (JsonPhotoContainer)jsonHelper.ParseJson(jsonResponse, typeof(JsonPhotoContainer));
-                    Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
-                    foreach (var photo in photoContainer.data)
-                    {
-                        string large_pic_url = photo.source;
-                        string small_pic_url = photo.picture;
-                        imageUrl image = new imageUrl(small_pic_url, large_pic_url);
-                        urls.Add(image);
-                    }
-                }
-                return;
-
             }
-            catch (HttpRequestException hre)
-            {
-                Debug.WriteLine("http exception {0}", hre.ToString());
-                return;
-            }
+            return;
         }
+
         public async void GetRStatusSingleFriendsAsync()
         {
             Task<string> getAccessTokenTask = this.authService.FetchAuthToken();
