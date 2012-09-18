@@ -7,25 +7,26 @@ using System.Text;
 using System.Threading.Tasks;
 using FBReader.Models;
 using FBReader.Services;
+using GalaSoft.MvvmLight;
 
-namespace FBReader.ViewModels
+namespace FBReader.ViewModel
 {
-    class MainPageViewModel
+    public class MainPageViewModel : ViewModelBase
     {
         public ObservableCollection<FBMiniProfile> FBItems{ get; set; }
 
         public MainPageViewModel()
         {
-            FBData fbData = (FBData)App.Current.Resources["fbData"];
-            this.FBItems = fbData.ProfilesList;
+            ViewModelLocator locator = (ViewModelLocator)App.Current.Resources["Locator"];
+            this.FBItems = locator.FBData.ProfilesList;
         }
 
         public void RefreshFBItems()
         {
-            FBData fbData = (FBData)App.Current.Resources["fbData"];
-            fbData.ProfilesList.Clear();
+            ViewModelLocator locator = (ViewModelLocator)App.Current.Resources["Locator"];
+            locator.FBData.ProfilesList.Clear();
             Debug.WriteLine("Cleared Fb items list");
-            fbData.GetRStatusSingleFriendsAsync();
+            locator.FBData.GetRStatusSingleFriendsAsync();
         }
     }
 }

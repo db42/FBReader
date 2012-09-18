@@ -13,7 +13,7 @@ using Windows.Web.Syndication;
 
 namespace FBReader.Services
 {
-    public class FBData
+    public class FBDataService
     {
         private readonly HttpClient httpClient;
         private readonly AuthService authService;
@@ -26,10 +26,10 @@ namespace FBReader.Services
         }
 
 
-        public FBData()
+        public FBDataService(UrlGenerator urlGenerator, AuthService authService)
         {
-            this.urlGenerator = new UrlGenerator();
-            this.authService = new AuthService(this.urlGenerator);
+            this.urlGenerator = urlGenerator;
+            this.authService = authService;
             this.httpClient = getHttpClient();
         }
 

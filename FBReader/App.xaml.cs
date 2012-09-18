@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FBReader.Services;
+using FBReader.ViewModel;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -55,7 +56,8 @@ namespace FBReader
                 //TODO: Load state from previously suspended application
             }
 
-            FBData fbData = (FBData)App.Current.Resources["fbData"];
+            ViewModelLocator locator = (ViewModelLocator)App.Current.Resources["Locator"];
+            FBDataService fbData = locator.FBData; 
             if (fbData != null)
             {
                 if (fbData.ProfilesList.Count == 0)

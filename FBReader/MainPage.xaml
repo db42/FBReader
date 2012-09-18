@@ -6,12 +6,10 @@
     xmlns:local="using:FBReader"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ViewModels="using:FBReader.ViewModels"
+    xmlns:ViewModels="using:FBReader.ViewModel"
+    DataContext="{Binding Main,Source={StaticResource Locator}}"
     mc:Ignorable="d">
 
-    <UserControl.DataContext>
-        <ViewModels:MainPageViewModel />
-    </UserControl.DataContext>
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
