@@ -58,10 +58,10 @@ namespace FBReader.Services
 
         private bool IsGirlWithRStatusSingle(FBMiniProfile profile)
         {
-            if (profile.gender == null || profile.gender.Equals("male") || profile.relationship_status == null)
+            if (profile.gender == null ||  profile.relationship_status == null)
                 return false;
 
-            if (profile.relationship_status.Equals("Single"))
+            if (profile.gender.Equals("female") && profile.relationship_status.Equals("Single"))
                 return true;
 
             return false;
