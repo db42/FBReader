@@ -39,5 +39,17 @@ namespace FBReader.Models
         {
             get { return _urls; }
         }
+
+        public bool IsGirlWithRStatusSingle()
+        {
+            if (this.gender == null ||  this.relationship_status == null)
+                return false;
+
+            if (this.gender.Equals("female") && this.relationship_status.Equals("Single"))
+                return true;
+
+            return false;
+           
+        }
     }
 }

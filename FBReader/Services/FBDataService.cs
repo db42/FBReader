@@ -37,36 +37,9 @@ namespace FBReader.Services
         public async Task<FBProfile> FetchUserProfile(string username, string access_token)
         {
             string url = urlGenerator.constructProfileUrl(username, access_token);
-            return await FetchAndParseJson<FBProfile>(url);
+            return await jsonHelper.FetchAndParseJson<FBProfile>(httpClient, url);
         }
 
-        private async Task<T> FetchAndParseJson<T>(string url)
-        {
-            try
-            {
-                var jsonResponse = await httpClient.GetByteArrayAsync(url);
-                T profile = (T)jsonHelper.ParseJson(jsonResponse, typeof(T));
-                return profile;
-
-            }
-            catch (HttpRequestException hre)
-            {
-                Debug.WriteLine("http exception {0}", hre.ToString());
-                return default(T);
-            }
-        }
-
-        private bool IsGirlWithRStatusSingle(FBMiniProfile profile)
-        {
-            if (profile.gender == null ||  profile.relationship_status == null)
-                return false;
-
-            if (profile.gender.Equals("female") && profile.relationship_status.Equals("Single"))
-                return true;
-
-            return false;
-           
-        }
 
         private async void FetchImageUrls(ObservableCollection<imageUrl> urls, string userid, string access_token)
         {
@@ -74,7 +47,7 @@ namespace FBReader.Services
             string profilePhotosAlbumId = null;
             Debug.WriteLine("album url {0}", albumsUrl);
 
-            JsonAlbumContainer albumContainer = await FetchAndParseJson<JsonAlbumContainer>(albumsUrl);
+            JsonAlbumContainer albumContainer = await jsonHelper.FetchAndParseJson<JsonAlbumContainer>(httpClient, albumsUrl);
             if (albumContainer == null || albumContainer.data.Length == 0)
             {
                 string large_pic_url = "https://graph.facebook.com/" + userid + "/picture?type=large";
@@ -95,7 +68,7 @@ namespace FBReader.Services
             if (profilePhotosAlbumId != null)
             {
                 string profilePhotosUrl = urlGenerator.constructPhotosUrl(profilePhotosAlbumId, access_token);
-                JsonPhotoContainer photoContainer = await FetchAndParseJson<JsonPhotoContainer>(profilePhotosUrl);
+                JsonPhotoContainer photoContainer = await jsonHelper.FetchAndParseJson<JsonPhotoContainer>(httpClient, profilePhotosUrl);
                 Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
                 foreach (var photo in photoContainer.data)
                 {
@@ -118,7 +91,7 @@ namespace FBReader.Services
 
             foreach (var profile in userProfile.friends.data)
             {
-                if (IsGirlWithRStatusSingle(profile))
+                if (profile.IsGirlWithRStatusSingle())
                 {
                     Debug.WriteLine("id {0}", profile.id);
                     FetchImageUrls(profile.urls, profile.id, access_token);
