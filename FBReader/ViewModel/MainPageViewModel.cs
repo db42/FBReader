@@ -18,13 +18,13 @@ namespace FBReader.ViewModel
         public MainPageViewModel()
         {
             ViewModelLocator locator = (ViewModelLocator)App.Current.Resources["Locator"];
-            this.FBItems = locator.FBData.ProfilesList;
+            this.FBItems = locator.FBData.FriendsList;
         }
 
         public void RefreshFBItems()
         {
             ViewModelLocator locator = (ViewModelLocator)App.Current.Resources["Locator"];
-            locator.FBData.ProfilesList.Clear();
+            locator.FBData.FriendsList.Clear();
             Debug.WriteLine("Cleared Fb items list");
             locator.FBData.GetRStatusSingleFriendsAsync();
         }

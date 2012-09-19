@@ -21,7 +21,7 @@ namespace FBReader.Services
         private readonly JsonHelper jsonHelper;
 
         private ObservableCollection<FBMiniProfile> _ProfilesList = new ObservableCollection<FBMiniProfile>();
-        public ObservableCollection<FBMiniProfile> ProfilesList
+        public ObservableCollection<FBMiniProfile> FriendsList
         {
             get { return _ProfilesList; }
         }
@@ -43,7 +43,7 @@ namespace FBReader.Services
 
         private async void FetchImageUrls(ObservableCollection<imageUrl> urls, string userid, string access_token)
         {
-            string albumsUrl = urlGenerator.constructAlbumsUrl(userid, access_token); 
+            string albumsUrl = urlGenerator.constructAlbumsUrl(userid, access_token);
             string profilePhotosAlbumId = null;
             Debug.WriteLine("album url {0}", albumsUrl);
 
@@ -56,7 +56,7 @@ namespace FBReader.Services
                 urls.Add(image);
                 return;
             }
-            
+
             foreach (var album in albumContainer.data)
             {
                 if (album.name.Equals("Profile Pictures"))
@@ -88,14 +88,15 @@ namespace FBReader.Services
             string username = "me";
 
             FBProfile userProfile = await FetchUserProfile(username, access_token);
+            var friends = userProfile.friends.data;
 
-            foreach (var profile in userProfile.friends.data)
+            foreach (var friend in friends)
             {
-                if (profile.IsGirlWithRStatusSingle())
+                if (friend.IsGirlWithRStatusSingle())
                 {
-                    Debug.WriteLine("id {0}", profile.id);
-                    FetchImageUrls(profile.urls, profile.id, access_token);
-                    ProfilesList.Add(profile);
+                    Debug.WriteLine("id {0}", friend.id);
+                    FetchImageUrls(friend.urls, friend.id, access_token);
+                    FriendsList.Add(friend);
                 }
             }
 

@@ -60,7 +60,7 @@ namespace FBReader
             FBDataService fbData = locator.FBData; 
             if (fbData != null)
             {
-                if (fbData.ProfilesList.Count == 0)
+                if (fbData.FriendsList.Count == 0)
                 {
                     fbData.GetRStatusSingleFriendsAsync();
                 }
