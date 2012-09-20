@@ -19,7 +19,7 @@ namespace FBReaderTest
             string username = "dushyant";
             string access_token = "access_token=1234";
             string resultProfileUrl = "https://graph.facebook.com/dushyant?access_token=1234&fields=id,name,relationship_status,friends.fields(relationship_status,gender,name)";
-            Assert.AreEqual(urlGenerator.constructProfileUrl(username, access_token) , resultProfileUrl);
+            Assert.AreEqual(urlGenerator.ConstructProfileUrl(username, access_token) , resultProfileUrl);
         }
 
     }

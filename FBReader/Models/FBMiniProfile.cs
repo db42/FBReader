@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 
 namespace FBReader.Models
 {
-    public struct imageUrl
+    public struct ImageUrl
     {
-        private string _small_pic_url;
-        public string small_pic_url 
+        private string _smallPicUrl;
+        public string SmallPicUrl 
         {
-            get { return _small_pic_url; }
+            get { return _smallPicUrl; }
 
         }
-        private string _large_pic_url;
-        public string large_pic_url 
+        private string _largePicUrl;
+        public string LargePicUrl 
         {
-            get { return _large_pic_url; } 
+            get { return _largePicUrl; } 
         }
 
-        public imageUrl(string small_pic, string large_pic)
+        public ImageUrl(string smallPic, string largePic)
         {
-            _small_pic_url = small_pic;
-            _large_pic_url = large_pic;
+            _smallPicUrl = smallPic;
+            _largePicUrl = largePic;
         }
     }
 
@@ -34,8 +34,8 @@ namespace FBReader.Models
         public string name { get; set; }
         public string gender { get; set; }
         public string relationship_status { get; set; }
-        private ObservableCollection<imageUrl> _urls = new ObservableCollection<imageUrl>();
-        public ObservableCollection<imageUrl> urls 
+        private ObservableCollection<ImageUrl> _urls = new ObservableCollection<ImageUrl>();
+        public ObservableCollection<ImageUrl> urls 
         {
             get { return _urls; }
         }

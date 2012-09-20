@@ -40,7 +40,7 @@ namespace FBReader
 
         private void logout_button_click(object sender, RoutedEventArgs e)
         {
-            AuthService.facebookLogout();
+            AuthService.FacebookLogout();
             MainPageViewModel vm = this.DataContext as MainPageViewModel;
             vm.RefreshFBItems();
         }

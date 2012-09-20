@@ -13,8 +13,8 @@ namespace FBReader.Services
 {
     public class AuthService
     {
-        private const string FacebookClientID = "328608250568415";
-        private const string FacebookCallbackUrl = "https://www.facebook.com/connect/login_success.html";
+        private const string facebookClientID = "328608250568415";
+        private const string facebookCallbackUrl = "https://www.facebook.com/connect/login_success.html";
         private UrlGenerator urlGenerator;
 
         public AuthService(UrlGenerator urlGenerator)
@@ -25,14 +25,14 @@ namespace FBReader.Services
 
         public async Task<bool> isAuthTokenValidForUser()
         {
-            string access_token;
+            string accessToken;
             if (Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"] == null)
             {
                 return false;
             }
 
-            access_token = Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"].ToString();
-            string _authTokenValidationUrl = urlGenerator.constructValidateAuthUrl(access_token);
+            accessToken = Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"].ToString();
+            string _authTokenValidationUrl = urlGenerator.ConstructValidateAuthUrl(accessToken);
             Debug.WriteLine("\n\nauthTokenValidation url {0}\n\n", _authTokenValidationUrl);
             WebRequest request = WebRequest.Create(_authTokenValidationUrl);
             try
@@ -74,9 +74,9 @@ namespace FBReader.Services
 
             try
             {
-                String FacebookAuthURL = urlGenerator.constructAuthUrl(FacebookClientID, FacebookCallbackUrl);
+                String FacebookAuthURL = urlGenerator.ConstructAuthUrl(facebookClientID, facebookCallbackUrl);
                 System.Uri StartUri = new Uri(FacebookAuthURL);
-                System.Uri EndUri = new Uri(FacebookCallbackUrl);
+                System.Uri EndUri = new Uri(facebookCallbackUrl);
                 WebAuthenticationResult webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
@@ -106,7 +106,7 @@ namespace FBReader.Services
             }
         }
 
-        public static void facebookLogout()
+        public static void FacebookLogout()
         {
             Windows.Storage.ApplicationData.Current.RoamingSettings.Values["oauth_token"] = null;
         }
