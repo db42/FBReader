@@ -37,13 +37,5 @@ namespace FBReader
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
         }
-
-        private void logout_button_click(object sender, RoutedEventArgs e)
-        {
-            AuthService.FacebookLogout();
-            MainPageViewModel vm = this.DataContext as MainPageViewModel;
-            vm.RefreshFBItems();
-        }
-
     }
 }
