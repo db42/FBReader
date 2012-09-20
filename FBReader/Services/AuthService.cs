@@ -74,10 +74,10 @@ namespace FBReader.Services
 
             try
             {
-                String FacebookAuthURL = urlGenerator.ConstructAuthUrl(facebookClientID, facebookCallbackUrl);
-                System.Uri StartUri = new Uri(FacebookAuthURL);
-                System.Uri EndUri = new Uri(facebookCallbackUrl);
-                WebAuthenticationResult webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
+                String facebookAuthURL = urlGenerator.ConstructAuthUrl(facebookClientID, facebookCallbackUrl);
+                System.Uri startUri = new Uri(facebookAuthURL);
+                System.Uri endUri = new Uri(facebookCallbackUrl);
+                WebAuthenticationResult webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, startUri, endUri);
                 if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
                     Debug.WriteLine("Authentication Success");
