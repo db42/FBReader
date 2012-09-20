@@ -46,7 +46,7 @@ namespace FBReader.ViewModel
 
         private void Logout()
         {
-            AuthService.facebookLogout();
+            AuthService.FacebookLogout();
             RefreshFBItems();
         }
     }
