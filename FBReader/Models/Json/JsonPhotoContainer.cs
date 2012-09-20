@@ -12,8 +12,19 @@ namespace FBReader.Models.Json
         {
             public string picture { get; set; }
             public string source { get; set; }
+
+            public imageUrl ConvertToImageUrl()
+            {
+                string large_pic_url = this.source;
+                string small_pic_url = this.picture;
+                imageUrl image = new imageUrl(small_pic_url, large_pic_url);
+                return image;
+            }
         }
 
         public Photo[] data { get; set; }
+
+
+
     }
 }

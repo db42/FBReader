@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FBReader.Models;
 
 namespace FBReader.Services
 {
@@ -20,7 +21,7 @@ namespace FBReader.Services
             return _baseurl + userid + "/albums/?" + access_token;
         }
 
-        public string constructPhotosUrl(string albumId,string access_token)
+        public string constructPhotosUrl(string albumId, string access_token)
         {
             return _baseurl + albumId + "/photos?" + access_token;
         }
@@ -33,7 +34,17 @@ namespace FBReader.Services
 
         public string constructValidateAuthUrl(string access_token)
         {
-            return _baseurl  + "me/?" + access_token;
+            return _baseurl + "me/?" + access_token;
         }
+
+        public imageUrl GenProfileImageUrl(string userid)
+        {
+            string large_pic_url = "https://graph.facebook.com/" + userid + "/picture?type=large";
+            string small_pic_url = "https://graph.facebook.com/" + userid + "/picture";
+            imageUrl image = new imageUrl(small_pic_url, large_pic_url);
+            return image;
+        }
+
+
     }
 }

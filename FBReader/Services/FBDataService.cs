@@ -50,10 +50,7 @@ namespace FBReader.Services
             JsonAlbumContainer albumContainer = await jsonHelper.FetchAndParseJson<JsonAlbumContainer>(httpClient, albumsUrl);
             if (albumContainer == null || albumContainer.data.Length == 0)
             {
-                string large_pic_url = "https://graph.facebook.com/" + userid + "/picture?type=large";
-                string small_pic_url = "https://graph.facebook.com/" + userid + "/picture";
-                imageUrl image = new imageUrl(small_pic_url, large_pic_url);
-                urls.Add(image);
+                urls.Add(urlGenerator.GenProfileImageUrl(userid));
                 return;
             }
 
@@ -72,10 +69,7 @@ namespace FBReader.Services
                 Debug.WriteLine("fetched photos length {0}", photoContainer.data.Length);
                 foreach (var photo in photoContainer.data)
                 {
-                    string large_pic_url = photo.source;
-                    string small_pic_url = photo.picture;
-                    imageUrl image = new imageUrl(small_pic_url, large_pic_url);
-                    urls.Add(image);
+                    urls.Add(photo.ConvertToImageUrl());
                 }
             }
             return;
